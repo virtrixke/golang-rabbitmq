@@ -1,7 +1,22 @@
 version: '3'
 
 services:
+  rabbitmq:
+    image: rabbitmq:management
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      # The standard AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    restart: unless-stopped
+    networks:
+      - network
   app:
+    depends_on: 
+      - rabbitmq
     # Using a Dockerfile is optional, but included for completeness.
     build: 
       context: .
@@ -21,7 +36,8 @@ services:
     command: /bin/sh -c "while sleep 1000; do :; done"  
 
     # Runs app on the same network as the service container, allows "forwardPorts" in devcontainer.json function.
-    # network_mode: service:another-service
+    networks:
+      - network
     
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
@@ -35,9 +51,9 @@ services:
     security_opt:
       - seccomp:unconfined
     
-  # You can include other services not opened by VS Code as well
-  # another-service:
-  #   image: rabbitmq:latest
-  #   restart: unless-stopped
-
     # As in the "app" service, use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+
+networks:
+  # Declare our private network.  We must declare one for the magic
+  # Docker DNS to work, but otherwise its default settings are fine.
+  network: {}
