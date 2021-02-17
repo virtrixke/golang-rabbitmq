@@ -14,19 +14,33 @@ func main() {
 		log.Fatal("Cannot initialize: ", err)
 	}
 
-	resp, err := rmqc.Overview()
+	// list users
+	// xs, err := rmqc.ListUsers()
 
-	if err != nil {
-		log.Fatal("Cannot show overview: ", err)
-	}
+	// fmt.Println(xs)
 
-	fmt.Println(resp.RabbitMQVersion)
+	// declares a queue
 
-	xs, err := rmqc.ListNodes()
+	// qs := rh.QueueSettings{}
+	// qs.Durable = true
+	// qs.AutoDelete = false
 
-	if err != nil {
-		log.Fatal("Failed to list nodes: ", err)
-	}
+	// resp, err := rmqc.DeclareQueue("/", "c.queue", qs)
 
-	fmt.Println(xs)
+	// fmt.Println(resp)
+
+	// lq, _ := rmqc.ListQueues()
+
+	// fmt.Println(lq)
+
+	uq := rh.UserSettings{}
+	uq.Name = "Vinny"
+	uq.Password = "VeryDifficult"
+	uq.Tags = "meetingslave"
+
+	nu, err := rmqc.PutUser("Vinvli", uq)
+
+	fmt.Println(nu)
+	fmt.Println(rmqc.ListUsers())
+
 }
